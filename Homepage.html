@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desi Connect Homepage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        .navbar {
+            background-color: #d3d3d3;
+        }
+        .navbar-brand, .nav-link {
+            color: rgb(0, 0, 0) !important;
+        }
+        .banner {
+            background: url('https://mir-s3-cdn-cf.behance.net/projects/404/38a356124116373.Y3JvcCwxMzgwLDEwODAsMjcwLDA.jpg') no-repeat center center/cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .category-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="https://i.imgur.com/QFeZEKy.png" style="width:30%" alt="logo"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Apparel</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Accessories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Festivities</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="banner text-center">
+    </div>
+    
+    <div class="container mt-5">
+        <h3 class="text-center mb-4">Shop by Category</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card category-card">
+                    <img src="https://i.pinimg.com/originals/4c/83/99/4c83999c838df73afd2c0e261c6a8c98.jpg" class="card-img-top" alt="Apparel">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Apparel</h5>
+                        <a href="#" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card category-card">
+                    <img src="https://i.pinimg.com/originals/f4/37/68/f43768caae59430b545b279d892b15aa.jpg" class="card-img-top" alt="Accessories">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Accessories</h5>
+                        <a href="#" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card category-card">
+                    <img src="https://th.bing.com/th/id/OIP.I6zgkG4KFu9hBo--x7qlQQHaIq?w=850&h=995&rs=1&pid=ImgDetMain" class="card-img-top" alt="Festivities">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Festivities</h5>
+                        <a href="#" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="mt-5 py-4 bg-dark text-light text-center">
+        <p>© 2025 Desi Connect. All rights reserved.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
