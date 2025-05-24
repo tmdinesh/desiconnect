@@ -1,0 +1,72 @@
+# Dependencies
+node_modules
+package-lock.json
+yarn.lock
+.pnp
+.pnp.js
+
+# Build output
+dist
+build
+/server/public
+client/dist
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temp files
+.DS_Store
+.cache
+.temp
+.tmp
+Thumbs.db
+
+# Testing
+coverage
+*.lcov
+.nyc_output
+*.test.js
+
+# IDEs and editors
+/.idea
+/.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Misc
+.replit
+/.replit.nix
+node_modules/
+replit.nix
+replit_zip_error_log.txt
+vite.config.ts.*
+*.tar.gz
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Production credentials
+/pg-data
+postgres-data
+/uploads/*
+!/uploads/.gitkeep

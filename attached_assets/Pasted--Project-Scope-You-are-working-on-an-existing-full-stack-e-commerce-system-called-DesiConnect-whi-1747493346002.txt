@@ -1,0 +1,108 @@
+
+
+Project Scope:
+You are working on an existing full-stack e-commerce system called DesiConnect, which has three interfaces:
+- Admin Panel
+- Seller Dashboard
+- Customer Portal
+Tech used: React, Express, PostgreSQL with Drizzle ORM, Tailwind, and optionally Zod. Theme is orange + white.
+
+Objective:
+Fix critical bugs across all interfaces. Do not rebuild the system. Only fix the issues and inconsistencies mentioned below while following the orange-white design theme.
+
+Fixes Required:
+
+1. Customer Interface
+
+Checkout Page
+- Fix: Subtotal and total amount show as ₹NaN or ₹0.00 even with valid items.
+- Ensure correct data is passed from the cart page.
+- Add international compatibility:
+  - Add required fields: Country, City, State, Zip Code
+  - Validate:
+    - Zip: numeric (5–6 digits)
+    - Country: required
+    - Address: min 10 chars
+
+My Orders Page
+- Show correct order status:
+  - Placed (initial)
+  - Ready to Ship (after seller marks it)
+  - Fulfilled (after admin provides tracking)
+- Display:
+  - Product image, name, qty
+  - Total price
+  - Tracking ID
+  - Status and timestamps
+
+2. Seller Dashboard
+
+Orders Page
+- Fix: Currently shows customer details only if there's a custom message.
+- Always show:
+  - Customer name
+  - Shipping address
+  - Optional customer message (if any)
+- “Mark Ready” button:
+  - Triggers a modal for order confirmation
+  - Sends full order object to admin and updates status to ready_to_ship
+  - Shows toast/snackbar on success
+- Product Page
+  - When adding a new product, make uploading image of the product mandatory
+
+Profile Page
+- Disable editing of businessName field in seller update form.
+
+3. Admin Panel
+
+Order Management
+- Fix: Admin approval modal shows blank/empty order or user data.
+- Display complete:
+  - Customer info (name + address)
+  - Seller info
+  - Product details (price, qty)
+  - Order total, date
+- Allow admin to enter tracking number manually
+  - Validate format: TR-XXXXXX-YYYYMMDD
+    - Regex: /^TR-[A-Z0-9]{6}-\d{8}$/
+  - Set order status to fulfilled
+  - Save tracking number in DB
+
+Product Management
+- Allow admin to delete any listed product.
+
+Seller Management
+- Allow admin to delete a seller from the DB.
+- Add confirmation dialog before deletion.
+
+Logout
+- Add visible logout button on the admin panel UI (sidebar or top-right).
+
+4. Backend & API Fixes
+
+- Join tables to ensure order object includes:
+  - Product, seller, customer
+- API /orders must return:
+  - status, trackingNumber, product, customer, seller
+- Fix order price calculation logic.
+- Update statuses in DB:
+  - placed → ready_to_ship (by seller)
+  - ready_to_ship → fulfilled (by admin with tracking)
+- Tracking number must be:
+  - Stored in orders table
+  - Shown in seller + customer dashboards
+
+Test Cases
+
+1. Customer adds item → proceeds to checkout → places order → total shows correctly.
+2. Seller logs in → marks order as ready → status updated → customer sees change.
+3. Admin logs in → views order → enters valid tracking ID → approves → status becomes fulfilled.
+4. Customer + Seller dashboards reflect trackingID and updated status.
+
+UI Consistency
+
+- All buttons, form fields, and messages must follow orange and white theme.
+- Display form errors inline with red text.
+- Use Tailwind CSS (if already used) or inline CSS.
+
+“Fix all bugs listed in this prompt in my DesiConnect project.”

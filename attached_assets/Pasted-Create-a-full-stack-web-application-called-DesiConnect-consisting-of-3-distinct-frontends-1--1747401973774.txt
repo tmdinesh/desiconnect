@@ -1,0 +1,96 @@
+Create a full-stack web application called *DesiConnect* consisting of 3 distinct frontends:
+1. 🧑‍💼 Admin Dashboard
+2. 🛍 Seller Dashboard
+3. 🛒 Customer Website
+
+THEME:
+- Use *Tailwind CSS* with an *orange and white* design system
+- Modern, clean UI for all three portals
+
+STACK:
+- Backend: *Node.js + Express* (TypeScript)
+- Database: *PostgreSQL, accessed via **Drizzle ORM*
+- ORM schema validation using *Zod*
+- DB hosted online, connected via .env using DATABASE_URL
+- Auth: *JWT-based* login for Admin and Seller
+- Image upload support using *Multer*
+- Frontends built with *React + Vite + Tailwind*
+
+DIRECTORY STRUCTURE:
+- /server: REST API for Admin, Seller, and Customer
+- /admin-frontend: Admin UI (React + Tailwind)
+- /seller-frontend: Seller UI (React + Tailwind)
+- /customer-frontend: Public shopping site (React + Tailwind)
+- Shared types/ and schema/ folder for TypeScript types + zod schemas
+- .env for secrets like DATABASE_URL, JWT_SECRET
+
+DATABASE SCHEMA:
+Using Drizzle ORM + Zod schema generation:
+
+- admins:
+  - id, email, password
+
+- sellers:
+  - id, email, password, businessName, warehouseAddress, businessAddress, zipCode, phone, gst, adminId (FK)
+
+- products:
+  - id, sellerId (FK), name, description, image, category, price, status ("pending" | "approved" | "rejected"), createdAt
+
+- orders:
+  - id, productId (FK), sellerId (FK), customerName, address, status ("placed" | "ready" | "fulfilled"), trackingNumber, createdAt
+
+- users (customers):
+  - id, name, email, password, address, cartData
+
+FEATURES — ADMIN:
+- JWT login
+- View all sellers
+- Create seller accounts with profile data
+- View/approve/reject submitted products
+- Delete listed products
+- View all orders
+- Fulfill orders by adding tracking number
+- Dashboard with metrics: total sellers, pending products, fulfilled orders, revenue (optional)
+
+FEATURES — SELLER:
+- JWT login (no signup)
+- if password is forgotten it must be mailed to the registered mail id 
+- View/update business profile (business address, warehouse address, GST number etc)
+- Add products (uploads image with multer) with available quantity 
+Remove products 
+- View product status
+- View own orders
+- Mark orders as "Ready to Pickup" (admin completes them)
+
+FEATURES — CUSTOMER:
+- User registration & login
+- if forgot password, password must be mailed to the registered email ID
+- Create and edit user profile
+- Browse only *approved* products 
+- search among available products
+- View product by category (apparel, accessories, festivities)
+- Add to cart
+- cart page must be typical with all the options such as remove, change quantity, total price
+- For each product in cart, there must be an option to leave a message to seller for personalization. This message should be displayed in the order details of the seller interface. 
+- Checkout with delivery address (no payment integration)
+- Places order → order is tied to product & seller
+- Views orders and status updates (optional)
+
+ORDER FLOW:
+1. Customer places order → saved in DB with status = "placed"
+2. Seller sees it and marks "Ready to Pickup"
+3. Admin views and adds tracking number → marks "Fulfilled"
+4. Customer sees order status update
+
+REQUIREMENTS:
+- Use zod to validate all form inputs (products, login, order)
+- Hash passwords with bcrypt
+- Store uploaded product images in /uploads folder or optionally configure Cloudinary
+- Frontend fetches data from backend via REST APIs
+- Each portal runs independently (admin: localhost:3001, seller: 3002, customer: 3000)
+- Provide instructions to run each frontend (npm install && npm run dev)
+- Provide a backend script to initialize the database with drizzle-kit push
+- Include protected API routes (JWT) with middleware for seller/admin roles
+
+DEPLOYMENT:
+- Compatible with Replit and Vercel deployment

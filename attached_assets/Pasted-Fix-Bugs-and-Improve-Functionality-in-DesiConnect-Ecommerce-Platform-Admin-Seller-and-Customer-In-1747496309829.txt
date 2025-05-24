@@ -1,0 +1,57 @@
+Fix Bugs and Improve Functionality in DesiConnect Ecommerce Platform (Admin, Seller, and Customer Interfaces)
+
+OBJECTIVE:
+You are required to fix specific issues and improve functionality across the DesiConnect ecommerce project. This involves the customer interface, seller interface, and admin panel. The design theme is orange and white, and must be preserved.
+
+CUSTOMER INTERFACE:
+
+1. On the Checkout page:
+   - The total amount is currently not displayed correctly. It shows as ₹0.00 or NaN.
+   - This value must be derived from the cart page and accurately displayed in the order summary section.
+   - Add full validation on the checkout form (required fields, valid zip code, etc.).
+   - Ensure it supports international orders with fields for country, city, state, zip code.
+
+ADMIN INTERFACE:
+
+1. In the Order Details popup:
+   - Replace the generic "Seller #X" with the actual seller's business name and business address.
+   - Ensure complete and accurate order details are shown (product name, quantity, total amount).
+   - The tracking number should be entered manually by the admin. Remove auto-generation.
+   - After clicking "Approve Order", the entered tracking number must:
+     - Be saved in the database.
+     - Be displayed in the seller’s order panel and the customer’s "My Orders" page.
+
+2. In the Orders Management → Ready to Ship Orders table:
+   - Display the seller’s business name under the Seller column.
+   - Display the correct total order amount under the Total column.
+
+3. In the Seller Approval System:
+   - Sellers should not be able to log in unless approved by the admin.
+   - Fix the bug that currently allows rejected sellers to log in.
+   - Add necessary server-side checks for seller approval status.
+
+4. In the All Sellers page:
+   - The View button must open a modal or section showing full seller details including business description, address, and phone number.
+   - Currently, phone number is showing as N/A. Fix to display the correct phone number from registration.
+   - Ensure that the Approve/Reject buttons update the seller’s status correctly and immediately reflect changes.
+
+5. In the Admin Dashboard:
+   - Remove the “0 new this month” label under Total Sellers card.
+   - Add a Logout option under the Quick Actions section.
+
+SELLER INTERFACE:
+
+1. In the Seller Registration Page:
+   - Add proper validation for all fields.
+   - Email must be valid.
+   - Password must meet security requirements and match confirmation field.
+   - Phone number must follow 10-digit Indian mobile format.
+   - Business Description must be made a required field.
+
+ADDITIONAL FUNCTIONALITY NOTES:
+
+- Each order must persist and accurately reflect its status transitions:
+  - Placed → Ready → Fulfilled.
+- The tracking number must follow the format: TR-XXXXXX-YYYYMMDD.
+- When the seller marks an order as “Ready”, the admin should receive it with full details.
+- When the admin approves and enters the tracking number, that info must propagate to both the customer and seller order views.
