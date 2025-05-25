@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     {
       name: "Dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
-      href: "/admin/dashboard",
+      href: "/admin",
     },
     {
       name: "Products",
@@ -56,11 +56,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       name: "Sellers",
       icon: <Users className="h-5 w-5" />,
       href: "/admin/sellers",
-    },
-    {
-      name: "Settings",
-      icon: <Settings className="h-5 w-5" />,
-      href: "/admin/settings",
     },
   ];
   
