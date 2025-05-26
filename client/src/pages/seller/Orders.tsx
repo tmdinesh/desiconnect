@@ -168,17 +168,16 @@ export default function AdminOrders() {
 
   if (isLoading) {
     return (
-      <SellerLayout>
       <div className="p-8">
         <div className="flex items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
         </div>
       </div>
-      </SellerLayout>
     );
   }
 
   return (
+    <SellerLayout>
     <div className="p-8">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Orders Management</h1>
@@ -709,5 +708,6 @@ export default function AdminOrders() {
         </DialogContent>
       </Dialog>
     </div>
+    </SellerLayout>
   );
 }
