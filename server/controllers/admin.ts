@@ -93,12 +93,23 @@ export const getSeller = async (req: Request, res: Response) => {
   try {
     const sellerId = parseInt(req.params.id);
     const seller = await storage.getSeller(sellerId);
-    
+
     if (!seller) {
       return res.status(404).json({ message: 'Seller not found' });
     }
-    
-    return res.status(200).json(seller);
+
+    const [totalProducts, totalOrders, totalRevenue] = await Promise.all([
+      storage.countProductsBySeller(sellerId),
+      storage.countOrdersBySeller(sellerId),
+      storage.sumRevenueBySeller(sellerId)
+    ]);
+
+    return res.status(200).json({
+      ...seller,
+      totalProducts,
+      totalOrders,
+      totalRevenue
+    });
   } catch (error) {
     console.error('Error fetching seller:', error);
     return res.status(500).json({ message: 'Server error' });
