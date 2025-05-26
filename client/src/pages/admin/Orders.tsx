@@ -444,7 +444,7 @@ export default function AdminOrders() {
                     )}
                     <div className="mt-2">
                       <p className="text-xs font-medium text-gray-500">Business Address:</p>
-                      <p className="text-sm">{selectedOrder.seller?.address || selectedOrder.seller?.businessAddress || "Address not available"}</p>
+                      <p className="text-sm">{selectedOrder.seller?.warehouse_address || selectedOrder.seller?.businessAddress || "Address not available"}</p>
                     </div>
                     {selectedOrder.seller?.gstNumber && (
                       <div className="mt-2">
