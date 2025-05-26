@@ -168,13 +168,13 @@ export default function AdminOrders() {
 
   if (isLoading) {
     return (
-      <AdminLayout>
+      <SellerLayout>
       <div className="p-8">
         <div className="flex items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
         </div>
       </div>
-      </AdminLayout>
+      </SellerLayout>
     );
   }
 
