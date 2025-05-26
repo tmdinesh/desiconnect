@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import AdminLayout from "@/layouts/AdminLayout";
 import { 
   AlertCircle, 
   Eye,
@@ -176,6 +177,7 @@ export default function AdminOrders() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-8">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Orders Management</h1>
@@ -713,5 +715,6 @@ export default function AdminOrders() {
         </DialogContent>
       </Dialog>
     </div>
+    </AdminLayout>
   );
 }
