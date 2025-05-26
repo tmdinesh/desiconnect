@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import SellerLayout from "@/components/layout/SellerLayout";
 import { 
   AlertCircle, 
   Eye,
@@ -167,6 +168,7 @@ export default function AdminOrders() {
 
   if (isLoading) {
     return (
+      <AdminLayout>
       <div className="p-8">
         <div className="flex items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
@@ -706,5 +708,6 @@ export default function AdminOrders() {
         </DialogContent>
       </Dialog>
     </div>
+  </AdminLayout>
   );
 }
