@@ -335,41 +335,24 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
 
     const order = await storage.getOrder(orderId);
     if (!order) return res.status(404).json({ message: 'Order not found' });
-
     if (order.status !== 'ready') {
       return res.status(400).json({ message: 'Order is not ready for fulfillment' });
     }
 
     const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
 
-    // Fetch customer
     const user = await storage.getUser(updatedOrder.userId);
-
-    // Fetch product
     const product = await storage.getProduct(updatedOrder.productId);
-
-    // Fetch seller
-    const seller = product?.sellerId ? await storage.getSeller(product.sellerId) : null;
-
-    const orderItem = {
-      name: product?.name || 'Product Name Not Available',
-      price: product?.price || 0,
-      quantity: order.quantity,
-      total: (product?.price || 0) * order.quantity,
-    };
+    const seller = await storage.getSeller(product?.sellerId || updatedOrder.sellerId);
 
     return res.status(200).json({
       message: 'Order fulfilled with tracking number',
       order: {
         ...updatedOrder,
         user,
-        product: orderItem,
-        seller: seller
-          ? {
-              businessName: seller.businessName || 'Unknown Seller',
-              address: seller.warehouseAddress || 'Address not available',
-            }
-          : null,
+        product,
+        seller,
+        totalPrice: Number(updatedOrder.totalPrice),
         formattedPrice: Number(updatedOrder.totalPrice).toFixed(2),
       }
     });
