@@ -139,6 +139,31 @@ export const updateSeller = async (req: Request, res: Response) => {
   }
 };
 
+export const getOrderDetails = async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const order = await storage.getOrder(orderId);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    const product = await storage.getProduct(order.productId);
+    const seller = await storage.getSeller(order.sellerId);
+    const user = await storage.getUser(order.userId);
+
+    return res.status(200).json({
+      ...order,
+      user,
+      product: product || null,
+      seller: seller || null,
+      totalPrice: Number(order.totalPrice),
+      formattedPrice: Number(order.totalPrice).toFixed(2),
+    });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 // Product approval operations
 export const getPendingProducts = async (req: Request, res: Response) => {
   try {
