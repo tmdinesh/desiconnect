@@ -86,6 +86,10 @@ desiconnect/
   - Email: customer@desiconnect.com
   - Password: Customer@123
 
+- **Customer**:
+  - Email: admin@desiconnect.com
+  - Password: Admin@123
+    
 ##  Deployment
 
 This application can be deployed on any platform that supports Node.js applications with PostgreSQL databases.
