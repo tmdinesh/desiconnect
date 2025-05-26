@@ -105,7 +105,6 @@ export const getAllSellers = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getSeller = async (req: Request, res: Response) => {
   try {
     const sellerId = parseInt(req.params.id);
