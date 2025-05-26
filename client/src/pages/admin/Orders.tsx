@@ -138,8 +138,7 @@ const handleViewOrder = async (order: any) => {
   try {
     const res = await fetch(`/api/admin/orders/${order.id}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Cache-Control": "no-cache"
+        Authorization: `Bearer ${token}`
       }
     });
 
