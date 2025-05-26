@@ -136,21 +136,21 @@ export default function AdminOrders() {
 
  const handleViewOrder = async (order: any) => {
   try {
-    const response = await fetch(`/api/admin/orders/${order.id}`, {
+    const res = await fetch(`/api/admin/orders/${order.id}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     });
 
-    if (!response.ok) throw new Error("Failed to fetch order details");
+    if (!res.ok) throw new Error("Failed to fetch order details");
 
-    const data = await response.json();
-    setSelectedOrder(data);
+    const data = await res.json();
+    setSelectedOrder(data); // enriched data from backend
     setViewDialogOpen(true);
-  } catch (error) {
+  } catch (err) {
     toast({
-      title: "Error fetching order",
-      description: error instanceof Error ? error.message : "Something went wrong.",
+      title: "Error loading order",
+      description: (err as Error).message,
       variant: "destructive",
     });
   }
