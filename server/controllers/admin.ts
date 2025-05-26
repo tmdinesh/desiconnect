@@ -340,17 +340,16 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
     }
 
     const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
-
     const user = await storage.getUser(updatedOrder.userId);
     const product = await storage.getProduct(updatedOrder.productId);
-    const seller = await storage.getSeller(product?.sellerId || updatedOrder.sellerId);
+    const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(updatedOrder.sellerId);
 
     return res.status(200).json({
       message: 'Order fulfilled with tracking number',
       order: {
         ...updatedOrder,
         user,
-        product,
+        product: product ? { ...product, seller } : null,
         seller,
         totalPrice: Number(updatedOrder.totalPrice),
         formattedPrice: Number(updatedOrder.totalPrice).toFixed(2),
