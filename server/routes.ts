@@ -100,6 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/admin/orders", authenticate, authorizeAdmin, adminController.getAllOrders);
   app.get("/api/admin/orders/status/:status", authenticate, authorizeAdmin, adminController.getOrdersByStatus);
   app.put("/api/admin/orders/:id/tracking", authenticate, authorizeAdmin, adminController.addTrackingToOrder);
+  app.get("/api/admin/orders/:id", authenticate, authorizeAdmin, adminController.getOrderDetails);
 
   // Seller Routes
   app.get("/api/seller/profile", authenticate, authorizeSeller, sellerController.getSellerProfile);
