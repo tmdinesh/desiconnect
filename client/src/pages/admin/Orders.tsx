@@ -443,7 +443,7 @@ export default function AdminOrders() {
                       <p className="text-sm">Phone: {selectedOrder.seller.phoneNumber}</p>
                     )}
                     <div className="mt-2">
-                      <p className="text-xs font-medium text-gray-500">Business Address:</p>
+                      <p className="text-xs font-medium text-gray-500">Warehouse Address:</p>
                       <p className="text-sm">{selectedOrder.seller?.warehouse_address || selectedOrder.seller?.businessAddress || "Address not available"}</p>
                     </div>
                     {selectedOrder.seller?.gstNumber && (
