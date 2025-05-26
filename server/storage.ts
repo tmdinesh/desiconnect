@@ -101,10 +101,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Seller operations
-  async getSeller(id: number): Promise<Seller | undefined> {
-    const [seller] = await db.select().from(sellers).where(eq(sellers.id, id));
-    return seller;
-  }
+  async getSeller(id: number): Promise<any> {
+  const [seller] = await db
+    .select()
+    .from(sellers)
+    .where(eq(sellers.id, id));
+
+  if (!seller) return undefined;
+
+  return {
+    ...seller,
+    businessName: seller.business_name,
+    phoneNumber: seller.phone,
+    address: seller.business_address,
+    gstNumber: seller.gst,
+    // No description in DB schema – return default
+    description: "No description provided",
+  };
+}
+
 
   async getSellerByEmail(email: string): Promise<Seller | undefined> {
     const [seller] = await db.select().from(sellers).where(eq(sellers.email, email));
