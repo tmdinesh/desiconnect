@@ -326,10 +326,10 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
 export const addTrackingToOrder = async (req: Request, res: Response) => {
   try {
     const orderId = parseInt(req.params.id);
-    const { trackingNumber } = req.body;
+    const { trackingNumber, carrier } = req.body;
 
-    if (!trackingNumber) {
-      return res.status(400).json({ message: 'Tracking number is required' });
+    if (!trackingNumber || !carrier) {
+      return res.status(400).json({ message: 'Tracking number and carrier are required' });
     }
 
     const order = await storage.getOrder(orderId);
@@ -338,7 +338,7 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Order is not ready for fulfillment' });
     }
 
-    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
+    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber, carrier);
     const user = await storage.getUser(updatedOrder.userId);
     const product = await storage.getProduct(updatedOrder.productId);
     const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(updatedOrder.sellerId);
@@ -350,6 +350,8 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
         user,
         product: product ? { ...product, seller } : null,
         seller,
+        trackingNumber,
+        carrier,
         totalPrice: Number(updatedOrder.totalPrice),
         formattedPrice: Number(updatedOrder.totalPrice).toFixed(2),
       }
