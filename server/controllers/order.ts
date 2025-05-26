@@ -25,6 +25,9 @@ export const getOrderDetails = async (req: Request, res: Response) => {
     // Fetch related data
     const product = await storage.getProduct(order.productId);
     const seller = await storage.getSeller(order.sellerId);
+    console.log('Product:', product);
+    console.log('Seller:', seller);
+
     const user = await storage.getUser(order.userId);
     
     const orderDetails = {
