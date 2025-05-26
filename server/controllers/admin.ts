@@ -327,32 +327,53 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
   try {
     const orderId = parseInt(req.params.id);
     const { trackingNumber } = req.body;
-    
+
     if (!trackingNumber) {
       return res.status(400).json({ message: 'Tracking number is required' });
     }
-    
+
     const order = await storage.getOrder(orderId);
-    
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-    
+    if (!order) return res.status(404).json({ message: 'Order not found' });
     if (order.status !== 'ready') {
       return res.status(400).json({ message: 'Order is not ready for fulfillment' });
     }
-    
+
+    // Update the order's tracking info
     const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
-    
+
+    // Fetch associated product (via order_items)
+    const orderItems = await storage.getOrderItemsByOrderId(orderId);
+    const firstItem = orderItems[0];
+
+    let product = null;
+    let seller = null;
+
+    if (firstItem) {
+      product = await storage.getProduct(firstItem.productId);
+      if (product?.sellerId) {
+        seller = await storage.getSeller(product.sellerId);
+      }
+    }
+
+    const user = await storage.getUser(updatedOrder.userId);
+
     return res.status(200).json({
       message: 'Order fulfilled with tracking number',
-      order: updatedOrder,
+      order: {
+        ...updatedOrder,
+        product: product || { name: "Product Not Available" },
+        seller: seller || { businessName: "Unknown Seller", address: "Address not available" },
+        user,
+        totalPrice: Number(updatedOrder.totalPrice),
+        formattedPrice: Number(updatedOrder.totalPrice).toFixed(2),
+      },
     });
   } catch (error) {
     console.error('Error adding tracking to order:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // Seller approval/rejection operations
 export const approveSeller = async (req: Request, res: Response) => {
