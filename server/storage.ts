@@ -35,6 +35,7 @@ export interface IStorage {
   createSeller(seller: InsertSeller): Promise<Seller>;
   updateSeller(id: number, seller: Partial<InsertSeller>): Promise<Seller | undefined>;
   getAllSellers(): Promise<Seller[]>;
+  countProductsBySeller(sellerId: number): Promise<number>;
   
   // Product operations
   getProduct(id: number): Promise<Product | undefined>;
@@ -190,6 +191,15 @@ export class DatabaseStorage implements IStorage {
         )
       );
   }
+
+  async countProductsBySeller(sellerId: number): Promise<number> {
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(products)
+    .where(eq(products.sellerId, sellerId));
+
+  return result[0]?.count ?? 0;
+}
 
   // Order operations
   async getOrder(id: number): Promise<any | undefined> {
