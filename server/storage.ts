@@ -37,6 +37,7 @@ export interface IStorage {
   getAllSellers(): Promise<Seller[]>;
   countProductsBySeller(sellerId: number): Promise<number>;
   countOrdersBySeller(sellerId: number): Promise<number>;
+  sumRevenueBySeller(sellerId: number): Promise<number>;
   
   // Product operations
   getProduct(id: number): Promise<Product | undefined>;
@@ -209,6 +210,15 @@ export class DatabaseStorage implements IStorage {
     .where(eq(orders.sellerId, sellerId));
 
   return result[0]?.count || 0;
+}
+
+  async sumRevenueBySeller(sellerId: number): Promise<number> {
+  const result = await db
+    .select({ sum: sql<number>`SUM(${orders.totalPrice})` })
+    .from(orders)
+    .where(eq(orders.sellerId, sellerId));
+
+  return result[0]?.sum || 0;
 }
 
   // Order operations
