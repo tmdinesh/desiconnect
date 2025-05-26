@@ -426,21 +426,29 @@ export default function AdminOrders() {
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground mb-2">Seller Information</h3>
                   <div className="border rounded-md p-3 bg-gray-50">
-                    <p className="font-medium">{selectedOrder.product?.seller?.businessName || selectedOrder.seller?.businessName || selectedOrder.sellerName || "Unknown Seller"}</p>
+                    <p className="font-medium">
+                      {selectedOrder.seller?.businessName || "Unknown Seller"}
+                    </p>
+                    
                     {selectedOrder.seller?.email && (
                       <p className="text-sm">{selectedOrder.seller.email}</p>
                     )}
-                    {selectedOrder.seller?.phoneNumber && (
-                      <p className="text-sm">Phone: {selectedOrder.seller.phoneNumber}</p>
+                  
+                    {selectedOrder.seller?.phone && (
+                      <p className="text-sm">Phone: {selectedOrder.seller.phone}</p>
                     )}
-                    <div className="mt-2">
-                      <p className="text-xs font-medium text-gray-500">Business Address:</p>
-                      <p className="text-sm">{selectedOrder.seller?.address || selectedOrder.seller?.businessAddress || "Address not available"}</p>
-                    </div>
-                    {selectedOrder.seller?.gstNumber && (
+                  
+                    {selectedOrder.seller?.businessAddress && (
+                      <div className="mt-2">
+                        <p className="text-xs font-medium text-gray-500">Business Address:</p>
+                        <p className="text-sm">{selectedOrder.seller.businessAddress}</p>
+                      </div>
+                    )}
+                  
+                    {selectedOrder.seller?.gst && (
                       <div className="mt-2">
                         <p className="text-xs font-medium text-gray-500">GST Number:</p>
-                        <p className="text-sm">{selectedOrder.seller.gstNumber}</p>
+                        <p className="text-sm">{selectedOrder.seller.gst}</p>
                       </div>
                     )}
                   </div>
@@ -610,27 +618,17 @@ export default function AdminOrders() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {!Array.isArray(selectedOrder.items) && (
-                        <TableRow>
-                          <TableCell className="font-medium">{selectedOrder.product?.name || "Product"}</TableCell>
-                          <TableCell>₹{selectedOrder.product?.price?.toFixed(2) || "0.00"}</TableCell>
-                          <TableCell>{selectedOrder.quantity || 1}</TableCell>
-                          <TableCell className="text-right">
-                            ₹{((selectedOrder.product?.price || 0) * (selectedOrder.quantity || 1)).toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {Array.isArray(selectedOrder.items) && selectedOrder.items.map((item: any, index: number) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">{item.product?.name || "Product"}</TableCell>
-                          <TableCell>₹{item.price?.toFixed(2) || "0.00"}</TableCell>
-                          <TableCell>{item.quantity}</TableCell>
-                          <TableCell className="text-right">₹{(item.price * item.quantity).toFixed(2)}</TableCell>
-                        </TableRow>
-                      ))}
+                      <TableRow>
+                        <TableCell className="font-medium">{selectedOrder.product?.name || "Product"}</TableCell>
+                        <TableCell>₹{selectedOrder.product?.price?.toFixed(2) || "0.00"}</TableCell>
+                        <TableCell>{selectedOrder.quantity || 1}</TableCell>
+                        <TableCell className="text-right">
+                          ₹{((selectedOrder.product?.price || 0) * (selectedOrder.quantity || 1)).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
                       <TableRow className="bg-gray-50">
                         <TableCell colSpan={3} className="text-right font-medium">Total Amount</TableCell>
-                        <TableCell className="text-right font-bold">₹{selectedOrder.totalPrice || selectedOrder.total_price || '0.00'}</TableCell>
+                        <TableCell className="text-right font-bold">₹{selectedOrder.formattedPrice || selectedOrder.totalPrice}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
