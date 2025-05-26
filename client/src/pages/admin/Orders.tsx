@@ -134,10 +134,28 @@ export default function AdminOrders() {
     }
   });
 
- const handleViewOrder = (order: any) => {
-    setSelectedOrder(order);
+const handleViewOrder = async (order: any) => {
+  try {
+    const res = await fetch(`/api/admin/orders/${order.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch order details");
+
+    const data = await res.json();
+    console.log("📦 Order Details Response:", data); // ✅ ADD THIS LINE
+    setSelectedOrder(data);
     setViewDialogOpen(true);
-  };
+  } catch (err) {
+    toast({
+      title: "Error loading order",
+      description: (err as Error).message,
+      variant: "destructive",
+    });
+  }
+};
 
   const handleAddTracking = (order: any) => {
     setSelectedOrder(order);
