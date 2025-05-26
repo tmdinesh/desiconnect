@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
+import AdminLayout from "@/layouts/AdminLayout";
 import { 
   CheckCircle, 
   XCircle, 
@@ -181,6 +182,7 @@ export default function AdminProducts() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-8">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Products Management</h1>
@@ -429,5 +431,6 @@ export default function AdminProducts() {
         </DialogContent>
       </Dialog>
     </div>
+    </AdminLayout>
   );
 }
