@@ -243,28 +243,32 @@ export const deleteProduct = async (req: Request, res: Response) => {
 };
 
 // Order management
+// Order management
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const allOrders = await storage.getAllOrders();
-
-    const enriched = await Promise.all(
+    
+    // Fetch product and seller information for each order
+    const ordersWithDetails = await Promise.all(
       allOrders.map(async (order) => {
         const product = await storage.getProduct(order.productId);
         const seller = await storage.getSeller(order.sellerId);
-        const user = await storage.getUser(order.userId);
-
+        
+        // Convert database field to a plain number to avoid serialization issues
+        const formattedPrice = Number(order.totalPrice);
+        
         return {
           ...order,
-          user,
-          product: product || null,
-          seller: seller || null,
-          totalPrice: Number(order.totalPrice),
-          formattedPrice: Number(order.totalPrice).toFixed(2),
+          productName: product?.name || 'Unknown Product',
+          sellerBusinessName: seller?.businessName || 'Unknown Seller',
+          // Ensure price data is consistent and accessible
+          totalPrice: formattedPrice,
+          formattedPrice: formattedPrice.toFixed(2)
         };
       })
     );
-
-    return res.status(200).json(enriched);
+    
+    return res.status(200).json(ordersWithDetails);
   } catch (error) {
     console.error('Error fetching all orders:', error);
     return res.status(500).json({ message: 'Server error' });
@@ -274,31 +278,30 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const getOrdersByStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.params;
-
+    
     if (!['placed', 'ready', 'fulfilled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status parameter' });
     }
-
+    
     const orders = await storage.getOrdersByStatus(status as 'placed' | 'ready' | 'fulfilled');
-
-    const enriched = await Promise.all(
+    
+    // Fetch product and seller information for each order
+    const ordersWithDetails = await Promise.all(
       orders.map(async (order) => {
         const product = await storage.getProduct(order.productId);
         const seller = await storage.getSeller(order.sellerId);
-        const user = await storage.getUser(order.userId);
-
         return {
           ...order,
-          user,
-          product: product || null,
-          seller: seller || null,
+          productName: product?.name || 'Unknown Product',
+          sellerBusinessName: seller?.businessName || 'Unknown Seller',
+          // Convert database field to a plain number to avoid serialization issues
           totalPrice: Number(order.totalPrice),
-          formattedPrice: Number(order.totalPrice).toFixed(2),
+          formattedPrice: Number(order.totalPrice).toFixed(2)
         };
       })
     );
-
-    return res.status(200).json(enriched);
+    
+    return res.status(200).json(ordersWithDetails);
   } catch (error) {
     console.error(`Error fetching orders with status ${req.params.status}:`, error);
     return res.status(500).json({ message: 'Server error' });
@@ -308,35 +311,27 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
 export const addTrackingToOrder = async (req: Request, res: Response) => {
   try {
     const orderId = parseInt(req.params.id);
-    const { trackingNumber, carrier } = req.body;
-
-    if (!trackingNumber || !carrier) {
-      return res.status(400).json({ message: 'Tracking number and carrier are required' });
+    const { trackingNumber } = req.body;
+    
+    if (!trackingNumber) {
+      return res.status(400).json({ message: 'Tracking number is required' });
     }
-
+    
     const order = await storage.getOrder(orderId);
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    
     if (order.status !== 'ready') {
       return res.status(400).json({ message: 'Order is not ready for fulfillment' });
     }
-
-    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber, carrier);
-    const user = await storage.getUser(updatedOrder.userId);
-    const product = await storage.getProduct(updatedOrder.productId);
-    const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(updatedOrder.sellerId);
-
+    
+    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
+    
     return res.status(200).json({
       message: 'Order fulfilled with tracking number',
-      order: {
-        ...updatedOrder,
-        user,
-        product: product ? { ...product, seller } : null,
-        seller,
-        trackingNumber,
-        carrier,
-        totalPrice: Number(updatedOrder.totalPrice),
-        formattedPrice: Number(updatedOrder.totalPrice).toFixed(2),
-      }
+      order: updatedOrder,
     });
   } catch (error) {
     console.error('Error adding tracking to order:', error);
