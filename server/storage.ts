@@ -192,10 +192,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Order operations
-  async getOrder(id: number): Promise<Order | undefined> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, id));
-    return order;
-  }
+  async getOrder(id: number): Promise<any | undefined> {
+  return await db.query.orders.findFirst({
+    where: (orders, { eq }) => eq(orders.id, id),
+    with: {
+      user: true,
+      product: true,
+      seller: true,
+    },
+  });
+}
 
   async getOrdersByUser(userId: number): Promise<Order[]> {
     return db.select().from(orders).where(eq(orders.userId, userId));
@@ -209,9 +215,18 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(orders).orderBy(desc(orders.createdAt));
   }
 
-  async getOrdersByStatus(status: OrderStatus): Promise<Order[]> {
-    return db.select().from(orders).where(eq(orders.status, status));
-  }
+  async getOrdersByStatus(status: OrderStatus): Promise<any[]> {
+  return db.query.orders.findMany({
+    where: (orders, { eq }) => eq(orders.status, status),
+    with: {
+      user: true,
+      product: true,
+      seller: true,
+    },
+    orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+  });
+}
+
 
   async createOrder(order: InsertOrder): Promise<Order> {
     const [createdOrder] = await db.insert(orders).values(order).returning();
