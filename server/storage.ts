@@ -1,10 +1,11 @@
 import { 
-  admins, 
-  sellers, 
-  products, 
-  orders, 
-  users, 
-  type Admin, 
+  admins,
+  sellers,
+  products,
+  orders,
+  users,
+  order_items,
+  type Admin,
   type InsertAdmin,
   type Seller,
   type InsertSeller,
@@ -18,7 +19,7 @@ import {
   type OrderStatus
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, ne, desc, asc, like, gte, lte, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 // Define the storage interface
 export interface IStorage {
@@ -28,14 +29,14 @@ export interface IStorage {
   createAdmin(admin: InsertAdmin): Promise<Admin>;
   updateAdmin(id: number, admin: Partial<InsertAdmin>): Promise<Admin | undefined>;
   getAllAdmins(): Promise<Admin[]>;
-  
+
   // Seller operations
   getSeller(id: number): Promise<Seller | undefined>;
   getSellerByEmail(email: string): Promise<Seller | undefined>;
   createSeller(seller: InsertSeller): Promise<Seller>;
   updateSeller(id: number, seller: Partial<InsertSeller>): Promise<Seller | undefined>;
   getAllSellers(): Promise<Seller[]>;
-  
+
   // Product operations
   getProduct(id: number): Promise<Product | undefined>;
   getProductsBySeller(sellerId: number): Promise<Product[]>;
@@ -47,7 +48,7 @@ export interface IStorage {
   updateProductStatus(id: number, status: ProductStatus): Promise<Product | undefined>;
   deleteProduct(id: number): Promise<boolean>;
   searchProducts(query: string): Promise<Product[]>;
-  
+
   // Order operations
   getOrder(id: number): Promise<Order | undefined>;
   getOrdersByUser(userId: number): Promise<Order[]>;
@@ -57,7 +58,8 @@ export interface IStorage {
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrderStatus(id: number, status: OrderStatus): Promise<Order | undefined>;
   updateOrderTracking(id: number, trackingNumber: string): Promise<Order | undefined>;
-  
+  getOrderItemsByOrderId(orderId: number): Promise<{ productId: number, quantity: number }[]>;
+
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
@@ -87,7 +89,7 @@ export class DatabaseStorage implements IStorage {
   async getAllAdmins(): Promise<Admin[]> {
     return db.select().from(admins);
   }
-  
+
   async updateAdmin(id: number, admin: Partial<InsertAdmin>): Promise<Admin | undefined> {
     const [updatedAdmin] = await db
       .update(admins)
@@ -175,7 +177,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProduct(id: number): Promise<boolean> {
-    const result = await db.delete(products).where(eq(products.id, id));
+    await db.delete(products).where(eq(products.id, id));
     return true;
   }
 
@@ -236,6 +238,13 @@ export class DatabaseStorage implements IStorage {
     return updatedOrder;
   }
 
+  async getOrderItemsByOrderId(orderId: number): Promise<{ productId: number, quantity: number }[]> {
+    return db
+      .select({ productId: order_items.productId, quantity: order_items.quantity })
+      .from(order_items)
+      .where(eq(order_items.orderId, orderId));
+  }
+
   // User operations
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -269,7 +278,7 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updatedUser;
   }
-  
+
   async getAllUsers(): Promise<User[]> {
     return db.select().from(users);
   }
