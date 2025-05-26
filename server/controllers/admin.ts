@@ -146,8 +146,11 @@ export const getOrderDetails = async (req: Request, res: Response) => {
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
     const product = await storage.getProduct(order.productId);
-    const seller = await storage.getSeller(order.sellerId);
     const user = await storage.getUser(order.userId);
+    
+    // Use sellerId from product if available
+    const sellerId = product?.sellerId || order.sellerId;
+    const seller = sellerId ? await storage.getSeller(sellerId) : null;
 
     return res.status(200).json({
       ...order,
@@ -162,7 +165,6 @@ export const getOrderDetails = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 // Product approval operations
 export const getPendingProducts = async (req: Request, res: Response) => {
