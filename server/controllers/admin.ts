@@ -190,48 +190,64 @@ export const deleteProduct = async (req: Request, res: Response) => {
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const allOrders = await storage.getAllOrders();
-    const enriched = await Promise.all(allOrders.map(async (order) => {
-      const user = await storage.getUser(order.userId);
-      const product = await storage.getProduct(order.productId);
-      const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
-      const quantity = order.quantity || 1;
-      const total = (product?.price || 0) * quantity;
-      return {
-        ...order,
-        user,
-        product,
-        seller,
-        totalPrice: total,
-        formattedPrice: total.toFixed(2),
-      };
-    }));
-    return res.status(200).json(enriched);
+
+    const ordersWithDetails = await Promise.all(
+      allOrders.map(async (order) => {
+        const user = await storage.getUser(order.userId);
+        const product = await storage.getProduct(order.productId);
+        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const quantity = order.quantity || 1;
+        const total = (product?.price || 0) * quantity;
+
+        return {
+          ...order,
+          user,
+          product,
+          seller,
+          quantity,
+          totalPrice: total,
+          formattedPrice: total.toFixed(2),
+        };
+      })
+    );
+
+    return res.status(200).json(ordersWithDetails);
   } catch (error) {
     console.error('Error fetching all orders:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
 
+
 export const getOrdersByStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.params;
-    if (!['placed', 'ready', 'fulfilled'].includes(status)) return res.status(400).json({ message: 'Invalid status' });
+    if (!['placed', 'ready', 'fulfilled'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status parameter' });
+    }
+
     const orders = await storage.getOrdersByStatus(status as 'placed' | 'ready' | 'fulfilled');
-    const enriched = await Promise.all(orders.map(async (order) => {
-      const user = await storage.getUser(order.userId);
-      const product = await storage.getProduct(order.productId);
-      const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
-      const quantity = order.quantity || 1;
-      const total = (product?.price || 0) * quantity;
-      return {
-        ...order,
-        user,
-        product,
-        seller,
-        totalPrice: total,
-        formattedPrice: total.toFixed(2),
-      };
-    }));
+
+    const enriched = await Promise.all(
+      orders.map(async (order) => {
+        const user = await storage.getUser(order.userId);
+        const product = await storage.getProduct(order.productId);
+        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const quantity = order.quantity || 1;
+        const total = (product?.price || 0) * quantity;
+
+        return {
+          ...order,
+          user,
+          product,
+          seller,
+          quantity,
+          totalPrice: total,
+          formattedPrice: total.toFixed(2),
+        };
+      })
+    );
+
     return res.status(200).json(enriched);
   } catch (error) {
     console.error(`Error fetching orders with status ${req.params.status}:`, error);
@@ -242,18 +258,24 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
 export const addTrackingToOrder = async (req: Request, res: Response) => {
   try {
     const orderId = parseInt(req.params.id);
-    const { trackingNumber, carrier } = req.body;
-    if (!trackingNumber || !carrier) return res.status(400).json({ message: 'Tracking number and carrier are required' });
+    const { trackingNumber } = req.body;
+
+    if (!trackingNumber) {
+      return res.status(400).json({ message: 'Tracking number is required' });
+    }
 
     const order = await storage.getOrder(orderId);
     if (!order) return res.status(404).json({ message: 'Order not found' });
-    if (order.status !== 'ready') return res.status(400).json({ message: 'Order is not ready for fulfillment' });
+    if (order.status !== 'ready') {
+      return res.status(400).json({ message: 'Order is not ready for fulfillment' });
+    }
 
-    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber, carrier);
-    const user = await storage.getUser(updatedOrder.userId);
-    const product = await storage.getProduct(updatedOrder.productId);
-    const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(updatedOrder.sellerId);
-    const quantity = updatedOrder.quantity || 1;
+    const updatedOrder = await storage.updateOrderTracking(orderId, trackingNumber);
+
+    const user = await storage.getUser(order.userId);
+    const product = await storage.getProduct(order.productId);
+    const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+    const quantity = order.quantity || 1;
     const total = (product?.price || 0) * quantity;
 
     return res.status(200).json({
@@ -263,8 +285,7 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
         user,
         product,
         seller,
-        trackingNumber,
-        carrier,
+        quantity,
         totalPrice: total,
         formattedPrice: total.toFixed(2),
       },
