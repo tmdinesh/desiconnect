@@ -11,7 +11,7 @@ export const getOrderDetails = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Authentication
+    // Check role-based access
     if (req.user) {
       if (req.user.role === 'customer' && order.userId !== req.user.id) {
         return res.status(403).json({ message: 'Access denied' });
@@ -26,7 +26,7 @@ export const getOrderDetails = async (req: Request, res: Response) => {
     const seller = await storage.getSeller(order.sellerId);
     const user = await storage.getUser(order.userId);
 
-    return res.status(200).json({
+    const orderDetails = {
       ...order,
       product: product ? {
         id: product.id,
@@ -54,7 +54,9 @@ export const getOrderDetails = async (req: Request, res: Response) => {
       } : null,
       formattedPrice: Number(order.totalPrice).toFixed(2),
       totalPrice: Number(order.totalPrice),
-    });
+    };
+
+    return res.status(200).json(orderDetails);
   } catch (error) {
     console.error('Error fetching order details:', error);
     return res.status(500).json({ message: 'Server error' });
