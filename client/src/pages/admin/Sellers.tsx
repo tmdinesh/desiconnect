@@ -596,7 +596,7 @@ export default function AdminSellersRevamp() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Business Address</p>
-                      <p className="font-medium">{selectedSeller.business_address || "Not provided"}</p>
+                      <p className="font-medium">{selectedSeller.address || "Not provided"}</p>
                     </div>
                   </div>
                 </div>
