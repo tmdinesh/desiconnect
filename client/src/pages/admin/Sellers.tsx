@@ -188,10 +188,27 @@ export default function AdminSellersRevamp() {
     }
   });
 
-  const handleViewSeller = (seller: any) => {
-    setSelectedSeller(seller);
+  const handleViewSeller = async (seller: any) => {
+  try {
+    const response = await fetch(`/api/admin/sellers/${seller.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch seller details");
+
+    const fullSeller = await response.json();
+    setSelectedSeller(fullSeller);
     setViewDialogOpen(true);
-  };
+  } catch (error) {
+    toast({
+      title: "Error fetching seller details",
+      description: error instanceof Error ? error.message : "An unknown error occurred",
+      variant: "destructive"
+    });
+  }
+};
 
   const handleApproveConfirm = (sellerId: number) => {
     setConfirmAction({ type: 'approve', sellerId });
