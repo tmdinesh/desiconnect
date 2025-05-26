@@ -243,7 +243,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
 };
 
 // Order management
-// Order management
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const allOrders = await storage.getAllOrders();
@@ -338,7 +337,6 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 // Seller approval/rejection operations
 export const approveSeller = async (req: Request, res: Response) => {
