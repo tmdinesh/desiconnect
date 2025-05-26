@@ -134,28 +134,10 @@ export default function AdminOrders() {
     }
   });
 
-const handleViewOrder = async (order: any) => {
-  try {
-    const res = await fetch(`/api/admin/orders/${order.id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch order details");
-
-    const data = await res.json();
-    console.log("📦 Order Details Response:", data); // ✅ ADD THIS LINE
-    setSelectedOrder(data);
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
     setViewDialogOpen(true);
-  } catch (err) {
-    toast({
-      title: "Error loading order",
-      description: (err as Error).message,
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleAddTracking = (order: any) => {
     setSelectedOrder(order);
@@ -238,7 +220,7 @@ const handleViewOrder = async (order: any) => {
                             ? format(new Date(order.createdAt), 'MMM dd, yyyy') 
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>₹{order.formattedPrice || order.totalPrice?.toFixed(2) || '0.00'}</TableCell>
+                        <TableCell>₹{order.total_price?.toFixed(2) || order.total?.toFixed(2) || order.totalAmount?.toFixed(2) || '0.00'}</TableCell>
                         <TableCell>{getStatusBadge(order.status)}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
@@ -311,8 +293,8 @@ const handleViewOrder = async (order: any) => {
                             ? format(new Date(order.createdAt), 'MMM dd, yyyy') 
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>₹{order.formattedPrice || order.totalPrice?.toFixed(2) || '0.00'}</TableCell>
-                        <TableCell>{order.seller?.businessName || "Unknown Seller"}</TableCell>
+                        <TableCell>₹{parseFloat(String(order.totalPrice)).toFixed(2) || '0.00'}</TableCell>
+                        <TableCell>{order.seller?.businessName || "Unknown"}</TableCell>
                         <TableCell>
                           <Button 
                             variant="outline" 
@@ -370,7 +352,7 @@ const handleViewOrder = async (order: any) => {
                             ? format(new Date(order.createdAt), 'MMM dd, yyyy') 
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>₹{order.formattedPrice || order.totalPrice?.toFixed(2) || "0.00"}</TableCell>
+                        <TableCell>₹{order.total_price?.toFixed(2) || order.total?.toFixed(2) || order.totalAmount?.toFixed(2) || '0.00'}</TableCell>
                         <TableCell>{order.seller?.businessName || "Unknown Seller"}</TableCell>
                         <TableCell>
                           {order.trackingNumber ? (
@@ -444,29 +426,21 @@ const handleViewOrder = async (order: any) => {
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground mb-2">Seller Information</h3>
                   <div className="border rounded-md p-3 bg-gray-50">
-                    <p className="font-medium">
-                      {selectedOrder.seller?.businessName || "Unknown Seller"}
-                    </p>
-                    
+                    <p className="font-medium">{selectedOrder.product?.seller?.businessName || selectedOrder.seller?.businessName || selectedOrder.sellerName || "Unknown Seller"}</p>
                     {selectedOrder.seller?.email && (
                       <p className="text-sm">{selectedOrder.seller.email}</p>
                     )}
-                  
-                    {selectedOrder.seller?.phone && (
-                      <p className="text-sm">Phone: {selectedOrder.seller.phone}</p>
+                    {selectedOrder.seller?.phoneNumber && (
+                      <p className="text-sm">Phone: {selectedOrder.seller.phoneNumber}</p>
                     )}
-                  
-                    {selectedOrder.seller?.businessAddress && (
-                      <div className="mt-2">
-                        <p className="text-xs font-medium text-gray-500">Business Address:</p>
-                        <p className="text-sm">{selectedOrder.seller.businessAddress}</p>
-                      </div>
-                    )}
-                  
-                    {selectedOrder.seller?.gst && (
+                    <div className="mt-2">
+                      <p className="text-xs font-medium text-gray-500">Business Address:</p>
+                      <p className="text-sm">{selectedOrder.seller?.address || selectedOrder.seller?.businessAddress || "Address not available"}</p>
+                    </div>
+                    {selectedOrder.seller?.gstNumber && (
                       <div className="mt-2">
                         <p className="text-xs font-medium text-gray-500">GST Number:</p>
-                        <p className="text-sm">{selectedOrder.seller.gst}</p>
+                        <p className="text-sm">{selectedOrder.seller.gstNumber}</p>
                       </div>
                     )}
                   </div>
@@ -636,17 +610,27 @@ const handleViewOrder = async (order: any) => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      <TableRow>
-                        <TableCell className="font-medium">{selectedOrder.product?.name || "Product Name Not Available"}</TableCell>
-                        <TableCell>₹{selectedOrder.product?.price ? selectedOrder.product.price.toFixed(2) : "0.00"}</TableCell>
-                        <TableCell>{selectedOrder.quantity || 1}</TableCell>
-                        <TableCell className="text-right">
-                          ₹{((selectedOrder.product?.price || 0) * (selectedOrder.quantity || 1)).toFixed(2)}
-                        </TableCell>
-                      </TableRow>
+                      {!Array.isArray(selectedOrder.items) && (
+                        <TableRow>
+                          <TableCell className="font-medium">{selectedOrder.product?.name || "Product"}</TableCell>
+                          <TableCell>₹{selectedOrder.product?.price?.toFixed(2) || "0.00"}</TableCell>
+                          <TableCell>{selectedOrder.quantity || 1}</TableCell>
+                          <TableCell className="text-right">
+                            ₹{((selectedOrder.product?.price || 0) * (selectedOrder.quantity || 1)).toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {Array.isArray(selectedOrder.items) && selectedOrder.items.map((item: any, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{item.product?.name || "Product"}</TableCell>
+                          <TableCell>₹{item.price?.toFixed(2) || "0.00"}</TableCell>
+                          <TableCell>{item.quantity}</TableCell>
+                          <TableCell className="text-right">₹{(item.price * item.quantity).toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
                       <TableRow className="bg-gray-50">
                         <TableCell colSpan={3} className="text-right font-medium">Total Amount</TableCell>
-                        <TableCell className="text-right font-bold">₹{selectedOrder.formattedPrice || selectedOrder.totalPrice}</TableCell>
+                        <TableCell className="text-right font-bold">₹{selectedOrder.totalPrice || selectedOrder.total_price || '0.00'}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
