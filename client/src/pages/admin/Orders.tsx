@@ -293,8 +293,8 @@ export default function AdminOrders() {
                             ? format(new Date(order.createdAt), 'MMM dd, yyyy') 
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>₹{parseFloat(String(order.totalPrice)).toFixed(2) || '0.00'}</TableCell>
-                        <TableCell>{order.seller?.businessName || "Unknown"}</TableCell>
+                        <TableCell>₹{order.formattedPrice || order.totalPrice?.toFixed(2) || '0.00'}</TableCell>
+                        <TableCell>{order.seller?.businessName || "Unknown Seller"}</TableCell>
                         <TableCell>
                           <Button 
                             variant="outline" 
@@ -352,7 +352,7 @@ export default function AdminOrders() {
                             ? format(new Date(order.createdAt), 'MMM dd, yyyy') 
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>₹{order.total_price?.toFixed(2) || order.total?.toFixed(2) || order.totalAmount?.toFixed(2) || '0.00'}</TableCell>
+                        <TableCell>₹{order.formattedPrice || order.totalPrice?.toFixed(2) || "0.00"}</TableCell>
                         <TableCell>{order.seller?.businessName || "Unknown Seller"}</TableCell>
                         <TableCell>
                           {order.trackingNumber ? (
@@ -619,8 +619,8 @@ export default function AdminOrders() {
                     </TableHeader>
                     <TableBody>
                       <TableRow>
-                        <TableCell className="font-medium">{selectedOrder.product?.name || "Product"}</TableCell>
-                        <TableCell>₹{selectedOrder.product?.price?.toFixed(2) || "0.00"}</TableCell>
+                        <TableCell className="font-medium">{selectedOrder.product?.name || "Product Name Not Available"}</TableCell>
+                        <TableCell>₹{selectedOrder.product?.price ? selectedOrder.product.price.toFixed(2) : "0.00"}</TableCell>
                         <TableCell>{selectedOrder.quantity || 1}</TableCell>
                         <TableCell className="text-right">
                           ₹{((selectedOrder.product?.price || 0) * (selectedOrder.quantity || 1)).toFixed(2)}
