@@ -195,7 +195,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
       allOrders.map(async (order) => {
         const user = await storage.getUser(order.userId);
         const product = await storage.getProduct(order.productId);
-        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const seller = product ? await storage.getSeller(product.sellerId) : null;
         const quantity = order.quantity || 1;
         const total = (product?.price || 0) * quantity;
 
@@ -218,7 +218,6 @@ export const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getOrdersByStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.params;
@@ -232,7 +231,7 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
       orders.map(async (order) => {
         const user = await storage.getUser(order.userId);
         const product = await storage.getProduct(order.productId);
-        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const seller = product ? await storage.getSeller(product.sellerId) : null;
         const quantity = order.quantity || 1;
         const total = (product?.price || 0) * quantity;
 
@@ -274,7 +273,7 @@ export const addTrackingToOrder = async (req: Request, res: Response) => {
 
     const user = await storage.getUser(order.userId);
     const product = await storage.getProduct(order.productId);
-    const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+    const seller = product ? await storage.getSeller(product.sellerId) : null;
     const quantity = order.quantity || 1;
     const total = (product?.price || 0) * quantity;
 
