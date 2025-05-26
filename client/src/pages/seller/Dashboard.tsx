@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import SellerLayout from "@/components/layout/SellerLayout";
 import { 
   Package, 
   ShoppingCart, 
@@ -33,6 +34,7 @@ export default function SellerDashboard() {
   }
 
   return (
+    <SellerLayout>
     <div className="p-8">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Seller Dashboard</h1>
@@ -98,5 +100,6 @@ export default function SellerDashboard() {
         </Card>
       </div>
     </div>
+  </SellerLayout>
   );
 }
