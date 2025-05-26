@@ -246,27 +246,27 @@ export const deleteProduct = async (req: Request, res: Response) => {
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const allOrders = await storage.getAllOrders();
-    
-    // Fetch product and seller information for each order
+
     const ordersWithDetails = await Promise.all(
       allOrders.map(async (order) => {
+        const user = await storage.getUser(order.userId);
         const product = await storage.getProduct(order.productId);
-        const seller = await storage.getSeller(order.sellerId);
-        
-        // Convert database field to a plain number to avoid serialization issues
-        const formattedPrice = Number(order.totalPrice);
-        
+        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const quantity = order.quantity || 1;
+        const total = (product?.price || 0) * quantity;
+
         return {
           ...order,
-          productName: product?.name || 'Unknown Product',
-          sellerBusinessName: seller?.businessName || 'Unknown Seller',
-          // Ensure price data is consistent and accessible
-          totalPrice: formattedPrice,
-          formattedPrice: formattedPrice.toFixed(2)
+          user,
+          product,
+          seller,
+          quantity,
+          totalPrice: total,
+          formattedPrice: total.toFixed(2),
         };
       })
     );
-    
+
     return res.status(200).json(ordersWithDetails);
   } catch (error) {
     console.error('Error fetching all orders:', error);
@@ -277,30 +277,33 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const getOrdersByStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.params;
-    
     if (!['placed', 'ready', 'fulfilled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status parameter' });
     }
-    
+
     const orders = await storage.getOrdersByStatus(status as 'placed' | 'ready' | 'fulfilled');
-    
-    // Fetch product and seller information for each order
-    const ordersWithDetails = await Promise.all(
+
+    const enriched = await Promise.all(
       orders.map(async (order) => {
+        const user = await storage.getUser(order.userId);
         const product = await storage.getProduct(order.productId);
-        const seller = await storage.getSeller(order.sellerId);
+        const seller = product ? await storage.getSeller(product.sellerId) : await storage.getSeller(order.sellerId);
+        const quantity = order.quantity || 1;
+        const total = (product?.price || 0) * quantity;
+
         return {
           ...order,
-          productName: product?.name || 'Unknown Product',
-          sellerBusinessName: seller?.businessName || 'Unknown Seller',
-          // Convert database field to a plain number to avoid serialization issues
-          totalPrice: Number(order.totalPrice),
-          formattedPrice: Number(order.totalPrice).toFixed(2)
+          user,
+          product,
+          seller,
+          quantity,
+          totalPrice: total,
+          formattedPrice: total.toFixed(2),
         };
       })
     );
-    
-    return res.status(200).json(ordersWithDetails);
+
+    return res.status(200).json(enriched);
   } catch (error) {
     console.error(`Error fetching orders with status ${req.params.status}:`, error);
     return res.status(500).json({ message: 'Server error' });
