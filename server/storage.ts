@@ -113,7 +113,7 @@ export class DatabaseStorage implements IStorage {
     ...seller,
     businessName: seller.business_name,
     phoneNumber: seller.phone,
-    address: seller.business_address,
+    businessAddress: seller.business_address,
     gstNumber: seller.gst,
     // No description in DB schema – return default
     description: "No description provided",
