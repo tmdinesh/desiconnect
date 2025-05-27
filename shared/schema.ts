@@ -33,6 +33,7 @@ export const adminsRelations = relations(admins, ({ many }) => ({
 }));
 
 // Seller Table
+// Seller Table
 export const sellers = pgTable("sellers", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
@@ -43,6 +44,7 @@ export const sellers = pgTable("sellers", {
   zipCode: text("zip_code"),
   phone: text("phone"),
   gst: text("gst"),
+  description: varchar("description", { length: 500 }), // Added description
   adminId: integer("admin_id").references(() => admins.id),
   approved: boolean("approved").default(false),
   rejected: boolean("rejected").default(false),
