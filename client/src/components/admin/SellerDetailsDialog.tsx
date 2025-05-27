@@ -82,7 +82,7 @@ export function SellerDetailsDialog({
                 
                 <div>
                   <p className="text-sm font-medium text-gray-500">Business Address</p>
-                  <p className="font-medium text-gray-900">{seller.address || "Not provided"}</p>
+                  <p className="font-medium text-gray-900">{seller.business_address || "Not provided"}</p>
                 </div>
               </div>
             </div>
